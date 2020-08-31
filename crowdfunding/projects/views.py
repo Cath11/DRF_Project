@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Project, Pledge
 from .serializers import ProjectSerializer, PledgeSerializer, ProjectDetailSerializer
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsNotOwner
 
 class ProjectList(APIView):
     permission_classes = [
@@ -48,6 +48,7 @@ class ProjectDetail(APIView):
 
     def put(self, request, pk):
         project = self.get_object(pk)
+        self.check_object_permissions(request, project)
         data = request.data
         serializer = ProjectDetailSerializer(
             instance=project,
@@ -67,6 +68,7 @@ class ProjectDetail(APIView):
 
     def delete(self, request, pk):
             project = self.get_object(pk)
+            self.check_object_permissions(request, project)
             try:
                 project.delete()
                 return Response(status=status.HTTP_200_OK)
@@ -75,7 +77,10 @@ class ProjectDetail(APIView):
          
 
 class PledgeList(APIView):
-
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsNotOwner
+        ]
     def get(self, request):
         pledges = Pledge.objects.all()
         serializer = PledgeSerializer(pledges, many=True)
@@ -95,7 +100,10 @@ class PledgeList(APIView):
         )    
 
 class PledgeDetail(APIView):
-
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+        ]
     def get_object(self, pk):
         try:
             return Pledge.objects.get(pk=pk)

@@ -13,7 +13,7 @@ class CustomUserSerializer(serializers.Serializer):
             username=validated_data['username'],
             email=validated_data['email'],
         )
-        user.ser_password(validated_Data['password'])
+        user.ser_password(validated_data['password'])
         user.save()
         return user 
         # return CustomUser.objects.create(**validated_data)
