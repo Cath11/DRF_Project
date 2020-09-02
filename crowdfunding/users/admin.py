@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
-class CustomerUserAdmin(UserAdmin):
+class CustomUserAdmin(UserAdmin):
     pass
 
-admin.site.register (get_user_model(),) #CustomUserAdmin
+admin.site.register (get_user_model(),CustomUserAdmin)
